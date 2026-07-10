@@ -15,8 +15,9 @@ import { Separator } from '@/components/ui/separator'
 import { getActorBySlug, getAllActors } from '@/lib/data'
 import { Actor, ExperienceItem, EducationItem, TrainingItem } from '@/types'
 
-export default function ActorProfilePage({ params }: { params: { slug: string } }) {
-  const actor = React.useMemo(() => getActorBySlug(params.slug), [params.slug])
+export default function ActorProfilePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = React.use(params)
+  const actor = React.useMemo(() => getActorBySlug(slug), [slug])
   
   const [currentPhotoIndex, setCurrentPhotoIndex] = React.useState(0)
   const [isGalleryOpen, setIsGalleryOpen] = React.useState(false)

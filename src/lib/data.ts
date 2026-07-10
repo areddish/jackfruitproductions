@@ -268,3 +268,7 @@ export function getActorById(id: string): Actor | undefined {
 export function getFeaturedActors(): Actor[] {
   return actors.filter((actor) => actor.featured)
 }
+
+export function getAllActors(): Actor[] {
+    return actors;
+}

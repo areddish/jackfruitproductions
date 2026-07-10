@@ -18,7 +18,7 @@ import { Actor, CastRole } from '@/types'
 
 export default function BuildCastPage() {
   const casts = useCastStore((state) => state.casts)
-  const activeCast = useCastStore((state) => state.activeCast)
+  //const activeCast = useCastStore((state) => state.activeCast)
   const roles = useCastStore((state) => state.roles)
   const addRole = useCastStore((state) => state.addRole)
   const removeRole = useCastStore((state) => state.removeRole)

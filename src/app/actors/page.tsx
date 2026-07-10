@@ -10,7 +10,8 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
-import { getAllActors, Actor } from '@/lib/data'
+import { getAllActors } from '@/lib/data'
+import { Actor } from '@/types'
 import { cn } from '@/lib/utils'
 
 const allSkills = ['Drama', 'Comedy', 'Action', 'Musical', 'Voiceover', 'Stunt Work', 'Improv', 'Period Drama', 'Noir', 'Sci-Fi']

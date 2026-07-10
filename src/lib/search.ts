@@ -1,7 +1,7 @@
-import type { Actor, SearchIndex } from '@/types'
+import type { Actor, ActorSearchResult } from '@/types'
 import { actors } from '@/lib/data'
 
-function buildSearchIndex(actorList: Actor[]): SearchIndex[] {
+function buildSearchIndex(actorList: Actor[]): ActorSearchResult[] {
   return actorList.map((actor) => {
     const textParts = [
       actor.name,
@@ -34,7 +34,7 @@ function buildSearchIndex(actorList: Actor[]): SearchIndex[] {
 
 const searchIndex = buildSearchIndex(actors)
 
-export function searchActors(query: string): SearchIndex[] {
+export function searchActors(query: string): ActorSearchResult[] {
   if (!query || query.trim().length < 2) {
     return []
   }
@@ -46,7 +46,7 @@ export function searchActors(query: string): SearchIndex[] {
   })
 }
 
-export function getSearchSuggestions(query: string, limit = 5): SearchIndex[] {
+export function getSearchSuggestions(query: string, limit = 5): ActorSearchResult[] {
   if (!query || query.trim().length < 2) {
     return []
   }

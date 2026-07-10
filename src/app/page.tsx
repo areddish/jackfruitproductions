@@ -12,9 +12,9 @@ import { getFeaturedActors } from '@/lib/data'
 import { useCastStore } from '@/store/cast-store'
 
 export default function LandingPage() {
-  const featuredActors = React.useMemo(() => getFeaturedActors(6), [])
+  const featuredActors = React.useMemo(() => getFeaturedActors(), [])
   const [searchQuery, setSearchQuery] = React.useState('')
-  const setFilters = useCastStore((state) => state.setFilters)
+  const setFilters = useCastStore((state) => state.filters)
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()

@@ -13,7 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Separator } from '@/components/ui/separator'
 import { getActorBySlug, getAllActors } from '@/lib/data'
-import { Actor, ExperienceItem, EducationItem, TrainingItem } from '@/types'
+import { Actor, Experience, Education, Training } from '@/types'
 
 export default function ActorProfilePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = React.use(params)
@@ -224,16 +224,16 @@ export default function ActorProfilePage({ params }: { params: Promise<{ slug: s
                             <div className="font-medium">{actor.physicalAttributes.height}</div>
                           </div>
                         )}
-                        {actor.physicalAttributes.eyes && (
+                        {actor.physicalAttributes.eyeColor && (
                           <div>
                             <div className="text-sm text-muted-foreground">Eyes</div>
-                            <div className="font-medium">{actor.physicalAttributes.eyes}</div>
+                            <div className="font-medium">{actor.physicalAttributes.eyeColor}</div>
                           </div>
                         )}
-                        {actor.physicalAttributes.hair && (
+                        {actor.physicalAttributes.hairColor && (
                           <div>
                             <div className="text-sm text-muted-foreground">Hair</div>
-                            <div className="font-medium">{actor.physicalAttributes.hair}</div>
+                            <div className="font-medium">{actor.physicalAttributes.hairColor}</div>
                           </div>
                         )}
                       </div>
@@ -276,21 +276,21 @@ export default function ActorProfilePage({ params }: { params: Promise<{ slug: s
                     <CardTitle>Resume</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    {actor.resumes.length === 0 ? (
+                    {!!actor.resume ? (
                       <div className="text-center py-8 text-muted-foreground">
                         No resume available
                       </div>
                     ) : (
-                      actor.resumes.map((resume, index) => (
+                      [actor.resume].map((resume, index) => (
                         <a
                           key={index}
-                          href={resume.url}
+                          href={"resume.pdfUrl -- fix"}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
                         >
                           <div>
-                            <div className="font-medium">{resume.name || 'Resume'}</div>
+                            <div className="font-medium">{'Resume'}</div>
                             <div className="text-sm text-muted-foreground">PDF Document</div>
                           </div>
                           <Button variant="outline" size="sm">
@@ -313,21 +313,21 @@ export default function ActorProfilePage({ params }: { params: Promise<{ slug: s
                   {actor.videos.map((video, index) => (
                     <Card key={index} className="overflow-hidden">
                       <div className="aspect-video bg-black">
-                        {video.type === 'youtube' && (
+                        {video.source === 'youtube' && (
                           <iframe
                             src={`https://www.youtube.com/embed/${video.url.split('v=')[1]}`}
                             className="w-full h-full"
                             allowFullScreen
                           />
                         )}
-                        {video.type === 'vimeo' && (
+                        {video.source === 'vimeo' && (
                           <iframe
                             src={`https://player.vimeo.com/video/${video.url.split('/').pop()}`}
                             className="w-full h-full"
                             allowFullScreen
                           />
                         )}
-                        {video.type === 'file' && (
+                        {video.source === 'uploaded' && (
                           <video src={video.url} controls className="w-full h-full" />
                         )}
                       </div>
@@ -399,16 +399,16 @@ export default function ActorProfilePage({ params }: { params: Promise<{ slug: s
                       {actor.availability.status === 'available' ? 'Available' : actor.availability.status === 'limited' ? 'Limited' : 'Unavailable'}
                     </Badge>
                   </div>
-                  {actor.availability.from && (
+                  {actor.availability.startDate && (
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">From</span>
-                      <span>{new Date(actor.availability.from).toLocaleDateString()}</span>
+                      <span>{new Date(actor.availability.startDate).toLocaleDateString()}</span>
                     </div>
                   )}
-                  {actor.availability.to && (
+                  {actor.availability.endDate && (
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">To</span>
-                      <span>{new Date(actor.availability.to).toLocaleDateString()}</span>
+                      <span>{new Date(actor.availability.endDate).toLocaleDateString()}</span>
                     </div>
                   )}
                 </CardContent>
@@ -462,7 +462,7 @@ export default function ActorProfilePage({ params }: { params: Promise<{ slug: s
   )
 }
 
-function ExperienceCard({ item }: { item: ExperienceItem }) {
+function ExperienceCard({ item }: { item: Experience }) {
   return (
     <Card>
       <CardContent className="p-6">
@@ -489,19 +489,19 @@ function ExperienceCard({ item }: { item: ExperienceItem }) {
   )
 }
 
-function TrainingCard({ item }: { item: TrainingItem }) {
+function TrainingCard({ item }: { item: Training }) {
   return (
     <Card>
       <CardContent className="p-6">
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
           <div className="flex-1">
             <h3 className="font-semibold text-lg">{item.institution}</h3>
-            {item.program && (
+            {/* {item.program && (
               <div className="text-muted-foreground">{item.program}</div>
             )}
             {item.teacher && (
               <div className="text-sm text-muted-foreground mt-1">With {item.teacher}</div>
-            )}
+            )} */}
           </div>
           <div className="text-right shrink-0">
             <div className="text-sm font-medium">{item.year}</div>

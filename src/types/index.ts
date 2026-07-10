@@ -17,9 +17,22 @@ export interface Actor {
   experience: Experience[];
   specialSkills: string[];
   availability: Availability;
+  unions?: string[];
   featured: boolean;
   createdAt: string;
   updatedAt: string;
+  // Manually fixed
+  headline?: string;
+  training: Training[];
+  contact?: any;
+  genres: string[];
+}
+
+export interface Availability {
+  status: 'available' | 'limited' | 'booked' | 'on-hold' | 'unavailable';
+  startDate?: string;
+  endDate?: string;
+  notes?: string;
 }
 
 export interface Photo {
@@ -28,6 +41,10 @@ export interface Photo {
   category: PhotoCategory;
   alt: string;
   isPrimary?: boolean;
+  // Manually fixed
+  width?: number;
+  height?: number;
+  caption?: string;
 }
 
 export type PhotoCategory =
@@ -94,14 +111,7 @@ export interface Training {
 
 export interface LanguageLevel {
   language: string;
-  level: 'Native' | 'Fluent' | 'Advanced' | 'Intermediate' | 'Basic';
-}
-
-export interface Availability {
-  status: 'available' | 'booked' | 'on-hold' | 'unavailable';
-  startDate?: string;
-  endDate?: string;
-  notes?: string;
+  level: string; //'Native' | 'Fluent' | 'Advanced' | 'Intermediate' | 'Basic';
 }
 
 export interface Cast {
@@ -132,6 +142,20 @@ export interface FilterState {
   availability?: string;
   experience?: string[];
   searchQuery?: string;
+}
+
+export interface ActorSearchResult {
+  id: string;
+  name: string;
+  slug: string;
+  text: string;
+  headshotUrl: string;
+  location: string;
+  playingAge: [number, number];
+  gender: 'Male' | 'Female' | 'Non-Binary' | 'Other';
+  skills: string[];
+  languages: LanguageLevel[];
+  accents: string[];
 }
 
 export interface SearchIndex {

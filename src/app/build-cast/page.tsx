@@ -76,7 +76,8 @@ export default function BuildCastPage() {
       id: `role-${Date.now()}`,
       roleName: 'New Role',
       description: '',
-      actorId: null,
+      actorId: undefined,
+      order: 0,
     }
     addRole(selectedCastId, newRole)
   }
@@ -110,7 +111,7 @@ export default function BuildCastPage() {
                 <p className="text-muted-foreground mt-1">Assemble your dream cast by assigning actors to roles</p>
               </div>
               {casts.length > 0 && (
-                <Select value={selectedCastId} onValueChange={selectCast}>
+                <Select value={selectedCastId ?? ''} onValueChange={selectCast}>
                   <SelectTrigger className="w-[200px]">
                     <SelectValue placeholder="Select a cast" />
                   </SelectTrigger>
@@ -155,12 +156,12 @@ export default function BuildCastPage() {
                     key={role.id}
                     role={role}
                     index={index}
-                    assignedActor={role.actorId ? getActorById(role.actorId) : null}
+                    assignedActor={role.actorId ? getActorById(role.actorId) ?? null : null}
                     onAssignClick={() => {
                       setSelectedRoleId(role.id)
                       setSearchOpen(true)
                     }}
-                    onRemoveClick={() => removeRole(role.id)}
+                    onRemoveClick={() => removeRole(selectedCastId ?? '', role.id)}
                   />
                 ))}
               </div>

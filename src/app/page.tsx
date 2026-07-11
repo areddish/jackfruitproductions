@@ -9,12 +9,10 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { getFeaturedActors } from '@/lib/data'
-import { useCastStore } from '@/store/cast-store'
 
 export default function LandingPage() {
   const featuredActors = React.useMemo(() => getFeaturedActors(), [])
   const [searchQuery, setSearchQuery] = React.useState('')
-  const setFilters = useCastStore((state) => state.filters)
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()

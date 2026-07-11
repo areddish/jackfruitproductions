@@ -126,6 +126,7 @@ export interface Cast {
 export interface CastRole {
   id: string;
   roleName: string;
+  title?: string;
   actorId?: string;
   description?: string;
   requirements?: string[];

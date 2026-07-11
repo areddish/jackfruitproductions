@@ -18,12 +18,22 @@ import { Actor, CastRole } from '@/types'
 
 export default function BuildCastPage() {
   const casts = useCastStore((state) => state.casts)
-  //const activeCast = useCastStore((state) => state.activeCast)
-  const roles = useCastStore((state) => state.roles)
+  const selectedCastId = useCastStore((state) => state.selectedCastId)
+  const selectCast = useCastStore((state) => state.selectCast)
   const addRole = useCastStore((state) => state.addRole)
   const removeRole = useCastStore((state) => state.removeRole)
   const assignActorToRole = useCastStore((state) => state.assignActorToRole)
   const reorderRoles = useCastStore((state) => state.reorderRoles)
+  
+  // Auto-select first cast if none selected
+  React.useEffect(() => {
+    if (!selectedCastId && casts.length > 0) {
+      selectCast(casts[0].id)
+    }
+  }, [casts, selectedCastId, selectCast])
+
+  const activeCast = casts.find((c) => c.id === selectedCastId)
+  const roles = activeCast?.roles ?? []
   
   const [searchOpen, setSearchOpen] = React.useState(false)
   const [searchQuery, setSearchQuery] = React.useState('')
@@ -49,30 +59,31 @@ export default function BuildCastPage() {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
     
-    if (over && active.id !== over.id) {
-      const oldIndex = roles.findIndex(r => r.id === active.id)
-      const newIndex = roles.findIndex(r => r.id === over.id)
+    if (over && active.id !== over.id && selectedCastId) {
+      const oldIndex = roles.findIndex((r: CastRole) => r.id === active.id)
+      const newIndex = roles.findIndex((r: CastRole) => r.id === over.id)
       
       if (oldIndex !== -1 && newIndex !== -1) {
-        const newOrder = arrayMove(roles, oldIndex, newIndex)
-        reorderRoles(newOrder)
+        const newOrder = arrayMove(roles, oldIndex, newIndex).map((r) => r.id)
+        reorderRoles(selectedCastId, newOrder)
       }
     }
   }
 
   const handleAddRole = () => {
+    if (!selectedCastId) return
     const newRole: CastRole = {
       id: `role-${Date.now()}`,
-      title: 'New Role',
+      roleName: 'New Role',
       description: '',
       actorId: null,
     }
-    addRole(newRole)
+    addRole(selectedCastId, newRole)
   }
 
   const handleAssignActor = (actorId: string) => {
-    if (selectedRoleId) {
-      assignActorToRole(selectedRoleId, actorId)
+    if (selectedRoleId && selectedCastId) {
+      assignActorToRole(selectedCastId, selectedRoleId, actorId)
       setSelectedRoleId(null)
       setSearchOpen(false)
       setSearchQuery('')
@@ -93,11 +104,27 @@ export default function BuildCastPage() {
       <div className="border-b bg-card">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold">Build a Cast</h1>
-              <p className="text-muted-foreground mt-1">Assemble your dream cast by assigning actors to roles</p>
+            <div className="flex items-center gap-4">
+              <div>
+                <h1 className="text-3xl font-bold">Build a Cast</h1>
+                <p className="text-muted-foreground mt-1">Assemble your dream cast by assigning actors to roles</p>
+              </div>
+              {casts.length > 0 && (
+                <Select value={selectedCastId} onValueChange={selectCast}>
+                  <SelectTrigger className="w-[200px]">
+                    <SelectValue placeholder="Select a cast" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {casts.map((cast) => (
+                      <SelectItem key={cast.id} value={cast.id}>
+                        {cast.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
             </div>
-            <Button onClick={handleAddRole}>
+            <Button onClick={handleAddRole} disabled={!selectedCastId}>
               <Plus className="h-4 w-4 mr-2" />
               Add Role
             </Button>

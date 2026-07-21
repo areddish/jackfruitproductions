@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Search, Filter, Sparkles, Film, Users, Star, ArrowRight, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -11,13 +12,14 @@ import { Badge } from '@/components/ui/badge'
 import { getFeaturedActors } from '@/lib/data'
 
 export default function LandingPage() {
+  const router = useRouter()
   const featuredActors = React.useMemo(() => getFeaturedActors(), [])
   const [searchQuery, setSearchQuery] = React.useState('')
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     // Navigate to actors page with search query
-    window.location.href = `/actors?q=${encodeURIComponent(searchQuery)}`
+    router.push(`/actors?q=${encodeURIComponent(searchQuery)}`)
   }
 
   return (

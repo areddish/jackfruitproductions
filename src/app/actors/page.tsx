@@ -24,6 +24,12 @@ export default function ActorsPage() {
   const [sortBy, setSortBy] = React.useState<string>('name')
   const [showFilters, setShowFilters] = React.useState(false)
 
+  // Pick up a ?q= search term passed from the homepage search bar
+  React.useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get('q')
+    if (q) setSearchQuery(q)
+  }, [])
+
   // Filter and sort actors
   const filteredActors = React.useMemo(() => {
     let actors = getAllActors()

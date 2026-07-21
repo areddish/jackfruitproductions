@@ -17,6 +17,7 @@ import {
 const navigation = [
   { name: 'Home', href: '/' },
   { name: 'Actors', href: '/actors' },
+  { name: 'Crew', href: '/crew' },
   { name: 'Casting', href: '/casting' },
   { name: 'Build a Cast', href: '/build-cast' },
 ]

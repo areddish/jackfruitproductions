@@ -1,4 +1,4 @@
-import type { Actor, Cast } from '@/types'
+import type { Actor, Cast, CrewMember } from '@/types'
 
 export const actors: Actor[] = [
   {
@@ -254,6 +254,109 @@ export const actors: Actor[] = [
   },
 ]
 
+export const crewMembers: CrewMember[] = [
+  {
+    id: 'c1',
+    name: 'Elena Vasquez',
+    slug: 'elena-vasquez',
+    department: 'Directing',
+    title: 'Director',
+    headline: 'Award-winning director known for atmospheric character dramas',
+    location: 'Los Angeles, CA',
+    bio: 'Feature and television director with a decade of experience shaping intimate, character-driven stories. Known for a collaborative set and a strong visual point of view.',
+    headshotUrl: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&h=400&fit=crop',
+    skills: ['Shot Composition', 'Actor Direction', 'Story Structure', 'Multi-cam'],
+    credits: [
+      { id: 'cc1', production: 'The Last Summer', role: 'Director', type: 'film', year: 2024 },
+      { id: 'cc2', production: 'Breaking Point', role: 'Episodic Director', type: 'tv', year: 2023 },
+    ],
+    availability: { status: 'available', startDate: '2025-01-15' },
+    featured: true,
+    createdAt: '2024-01-20T10:00:00Z',
+    updatedAt: '2024-12-01T10:00:00Z',
+  },
+  {
+    id: 'c2',
+    name: 'Daniel Osei',
+    slug: 'daniel-osei',
+    department: 'Camera',
+    title: 'Director of Photography',
+    headline: 'Cinematographer specializing in natural light and handheld work',
+    location: 'New York, NY',
+    bio: 'DP with a strong background in indie drama and documentary-style coverage. Brings a naturalistic, light-driven visual language to every project.',
+    headshotUrl: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=400&h=400&fit=crop',
+    skills: ['Lighting Design', 'ARRI Alexa', 'Steadicam', 'Color Theory'],
+    credits: [
+      { id: 'cc1', production: 'King Lear', role: 'Director of Photography', type: 'theatre', year: 2024 },
+      { id: 'cc2', production: 'The Wire', role: 'Camera Operator', type: 'tv', year: 2022 },
+    ],
+    availability: { status: 'available', startDate: '2025-02-01' },
+    featured: true,
+    createdAt: '2024-02-15T10:00:00Z',
+    updatedAt: '2024-12-01T10:00:00Z',
+  },
+  {
+    id: 'c3',
+    name: 'Priya Nair',
+    slug: 'priya-nair',
+    department: 'Editing',
+    title: 'Film Editor',
+    headline: 'Editor with a sharp instinct for pacing and emotional rhythm',
+    location: 'Atlanta, GA',
+    bio: 'Post-production editor known for tight, emotionally resonant cuts across drama and short-form narrative. Fluent in Avid and Premiere pipelines.',
+    headshotUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop',
+    skills: ['Avid Media Composer', 'Premiere Pro', 'Sound Sync', 'Color Grading'],
+    credits: [
+      { id: 'cc1', production: 'Short Film Festival Winner', role: 'Editor', type: 'short', year: 2024 },
+      { id: 'cc2', production: 'The Namesake', role: 'Assistant Editor', type: 'theatre', year: 2023 },
+    ],
+    availability: { status: 'available', startDate: '2025-01-10' },
+    featured: false,
+    createdAt: '2024-03-05T10:00:00Z',
+    updatedAt: '2024-11-15T10:00:00Z',
+  },
+  {
+    id: 'c4',
+    name: 'Marcus Whitfield',
+    slug: 'marcus-whitfield',
+    department: 'Production',
+    title: 'Producer',
+    headline: 'Line producer with a track record of on-budget indie features',
+    location: 'Chicago, IL',
+    bio: 'Producer overseeing budgeting, scheduling, and logistics for independent film and television projects. Known for keeping ambitious productions on time and on budget.',
+    headshotUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop',
+    skills: ['Budgeting', 'Scheduling', 'Location Scouting', 'Union Compliance'],
+    credits: [
+      { id: 'cc1', production: 'Narcos', role: 'Line Producer', type: 'tv', year: 2022 },
+      { id: 'cc2', production: 'The Godfather', role: 'Producer - Stage', type: 'theatre', year: 2024 },
+    ],
+    availability: { status: 'booked', endDate: '2025-03-01', notes: 'Currently producing, available after March' },
+    featured: false,
+    createdAt: '2024-04-10T10:00:00Z',
+    updatedAt: '2024-12-01T10:00:00Z',
+  },
+  {
+    id: 'c5',
+    name: 'Lily Zhang',
+    slug: 'lily-zhang',
+    department: 'Music',
+    title: 'Composer',
+    headline: 'Film composer blending orchestral and electronic textures',
+    location: 'Los Angeles, CA',
+    bio: 'Composer crafting original scores for film and television, moving fluidly between sweeping orchestral themes and minimal electronic soundscapes.',
+    headshotUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=400&fit=crop',
+    skills: ['Orchestral Scoring', 'Sound Design', 'Logic Pro', 'Music Supervision'],
+    credits: [
+      { id: 'cc1', production: 'West Side Story', role: 'Composer - Stage', type: 'theatre', year: 2022 },
+      { id: 'cc2', production: 'Crazy Ex-Girlfriend', role: 'Additional Music', type: 'tv', year: 2023 },
+    ],
+    availability: { status: 'available', startDate: '2025-01-20' },
+    featured: true,
+    createdAt: '2024-05-18T10:00:00Z',
+    updatedAt: '2024-11-20T10:00:00Z',
+  },
+]
+
 export const initialCasts: Cast[] = [
   {
     id: 'cast-1',
@@ -263,6 +366,11 @@ export const initialCasts: Cast[] = [
       { id: 'r1', roleName: 'Lead Female - Sarah', actorId: '1', order: 0, description: '30s, introspective, strong-willed' },
       { id: 'r2', roleName: 'Lead Male - David', order: 1, description: '40s, weathered, complex antagonist' },
       { id: 'r3', roleName: 'Supporting - Maria', order: 2, description: '20s, energetic, comic relief' },
+    ],
+    crewRoles: [
+      { id: 'cr1', positionName: 'Director', department: 'Directing', crewMemberId: 'c1', order: 0 },
+      { id: 'cr2', positionName: 'Director of Photography', department: 'Camera', order: 1 },
+      { id: 'cr3', positionName: 'Editor', department: 'Editing', order: 2 },
     ],
     createdAt: '2024-12-01T10:00:00Z',
     updatedAt: '2024-12-01T10:00:00Z',
@@ -283,4 +391,20 @@ export function getFeaturedActors(): Actor[] {
 
 export function getAllActors(): Actor[] {
     return actors;
+}
+
+export function getCrewMemberBySlug(slug: string): CrewMember | undefined {
+  return crewMembers.find((crew) => crew.slug === slug)
+}
+
+export function getCrewMemberById(id: string): CrewMember | undefined {
+  return crewMembers.find((crew) => crew.id === id)
+}
+
+export function getFeaturedCrewMembers(): CrewMember[] {
+  return crewMembers.filter((crew) => crew.featured)
+}
+
+export function getAllCrewMembers(): CrewMember[] {
+  return crewMembers;
 }

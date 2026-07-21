@@ -119,6 +119,7 @@ export interface Cast {
   name: string;
   description?: string;
   roles: CastRole[];
+  crewRoles: CrewRole[];
   createdAt: string;
   updatedAt: string;
 }
@@ -130,6 +131,56 @@ export interface CastRole {
   actorId?: string;
   description?: string;
   requirements?: string[];
+  notes?: string;
+  order: number;
+}
+
+export type CrewDepartment =
+  | 'Directing'
+  | 'Production'
+  | 'Camera'
+  | 'Sound'
+  | 'Art'
+  | 'Editing'
+  | 'Costume & Makeup'
+  | 'Lighting & Grip'
+  | 'Music'
+  | 'VFX';
+
+export interface CrewMember {
+  id: string;
+  name: string;
+  slug: string;
+  department: CrewDepartment;
+  title: string;
+  headline?: string;
+  location: string;
+  bio: string;
+  headshotUrl: string;
+  skills: string[];
+  credits: CrewCredit[];
+  availability: Availability;
+  contact?: any;
+  featured: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CrewCredit {
+  id: string;
+  production: string;
+  role: string;
+  type: 'film' | 'tv' | 'theatre' | 'commercial' | 'short';
+  year: number;
+  director?: string;
+}
+
+export interface CrewRole {
+  id: string;
+  positionName: string;
+  department?: CrewDepartment;
+  crewMemberId?: string;
+  description?: string;
   notes?: string;
   order: number;
 }

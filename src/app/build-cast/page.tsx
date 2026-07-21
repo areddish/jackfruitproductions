@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { DndContext, closestCenter, DragEndEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { arrayMove, SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Plus, Trash2, GripVertical, Users, Search, X } from 'lucide-react'
+import { Plus, Trash2, GripVertical, Users, Search, X, Clapperboard } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
@@ -13,8 +13,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useCastStore } from '@/store/cast-store'
-import { getAllActors } from '@/lib/data'
-import { Actor, CastRole } from '@/types'
+import { getAllActors, getAllCrewMembers } from '@/lib/data'
+import { Actor, CastRole, CrewMember, CrewRole } from '@/types'
 
 export default function BuildCastPage() {
   const casts = useCastStore((state) => state.casts)
@@ -24,7 +24,11 @@ export default function BuildCastPage() {
   const removeRole = useCastStore((state) => state.removeRole)
   const assignActorToRole = useCastStore((state) => state.assignActorToRole)
   const reorderRoles = useCastStore((state) => state.reorderRoles)
-  
+  const addCrewRole = useCastStore((state) => state.addCrewRole)
+  const removeCrewRole = useCastStore((state) => state.removeCrewRole)
+  const assignCrewMemberToRole = useCastStore((state) => state.assignCrewMemberToRole)
+  const reorderCrewRoles = useCastStore((state) => state.reorderCrewRoles)
+
   // Auto-select first cast if none selected
   React.useEffect(() => {
     if (!selectedCastId && casts.length > 0) {
@@ -34,12 +38,18 @@ export default function BuildCastPage() {
 
   const activeCast = casts.find((c) => c.id === selectedCastId)
   const roles = activeCast?.roles ?? []
-  
+  const crewRoles = activeCast?.crewRoles ?? []
+
   const [searchOpen, setSearchOpen] = React.useState(false)
   const [searchQuery, setSearchQuery] = React.useState('')
   const [selectedRoleId, setSelectedRoleId] = React.useState<string | null>(null)
   const [allActors] = React.useState<Actor[]>(getAllActors())
-  
+
+  const [crewSearchOpen, setCrewSearchOpen] = React.useState(false)
+  const [crewSearchQuery, setCrewSearchQuery] = React.useState('')
+  const [selectedCrewRoleId, setSelectedCrewRoleId] = React.useState<string | null>(null)
+  const [allCrewMembers] = React.useState<CrewMember[]>(getAllCrewMembers())
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -50,22 +60,45 @@ export default function BuildCastPage() {
 
   const filteredActors = React.useMemo(() => {
     if (!searchQuery) return allActors
-    return allActors.filter(actor => 
+    return allActors.filter(actor =>
       actor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       actor.skills.some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase()))
     )
   }, [allActors, searchQuery])
 
+  const filteredCrewMembers = React.useMemo(() => {
+    if (!crewSearchQuery) return allCrewMembers
+    return allCrewMembers.filter(member =>
+      member.name.toLowerCase().includes(crewSearchQuery.toLowerCase()) ||
+      member.title.toLowerCase().includes(crewSearchQuery.toLowerCase()) ||
+      member.skills.some(skill => skill.toLowerCase().includes(crewSearchQuery.toLowerCase()))
+    )
+  }, [allCrewMembers, crewSearchQuery])
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
-    
+
     if (over && active.id !== over.id && selectedCastId) {
       const oldIndex = roles.findIndex((r: CastRole) => r.id === active.id)
       const newIndex = roles.findIndex((r: CastRole) => r.id === over.id)
-      
+
       if (oldIndex !== -1 && newIndex !== -1) {
         const newOrder = arrayMove(roles, oldIndex, newIndex).map((r) => r.id)
         reorderRoles(selectedCastId, newOrder)
+      }
+    }
+  }
+
+  const handleCrewDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+
+    if (over && active.id !== over.id && selectedCastId) {
+      const oldIndex = crewRoles.findIndex((r: CrewRole) => r.id === active.id)
+      const newIndex = crewRoles.findIndex((r: CrewRole) => r.id === over.id)
+
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const newOrder = arrayMove(crewRoles, oldIndex, newIndex).map((r) => r.id)
+        reorderCrewRoles(selectedCastId, newOrder)
       }
     }
   }
@@ -82,6 +115,18 @@ export default function BuildCastPage() {
     addRole(selectedCastId, newRole)
   }
 
+  const handleAddCrewRole = () => {
+    if (!selectedCastId) return
+    const newCrewRole: CrewRole = {
+      id: `crew-role-${Date.now()}`,
+      positionName: 'New Position',
+      description: '',
+      crewMemberId: undefined,
+      order: 0,
+    }
+    addCrewRole(selectedCastId, newCrewRole)
+  }
+
   const handleAssignActor = (actorId: string) => {
     if (selectedRoleId && selectedCastId) {
       assignActorToRole(selectedCastId, selectedRoleId, actorId)
@@ -91,7 +136,17 @@ export default function BuildCastPage() {
     }
   }
 
+  const handleAssignCrewMember = (crewMemberId: string) => {
+    if (selectedCrewRoleId && selectedCastId) {
+      assignCrewMemberToRole(selectedCastId, selectedCrewRoleId, crewMemberId)
+      setSelectedCrewRoleId(null)
+      setCrewSearchOpen(false)
+      setCrewSearchQuery('')
+    }
+  }
+
   const getActorById = (id: string) => allActors.find(a => a.id === id)
+  const getCrewMemberById = (id: string) => allCrewMembers.find(c => c.id === id)
 
   return (
     <motion.div
@@ -125,16 +180,23 @@ export default function BuildCastPage() {
                 </Select>
               )}
             </div>
-            <Button onClick={handleAddRole} disabled={!selectedCastId}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Role
-            </Button>
+            <div className="flex gap-2">
+              <Button onClick={handleAddRole} disabled={!selectedCastId}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Role
+              </Button>
+              <Button onClick={handleAddCrewRole} disabled={!selectedCastId} variant="outline">
+                <Clapperboard className="h-4 w-4 mr-2" />
+                Add Crew Position
+              </Button>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
+        <h2 className="text-xl font-semibold mb-4">Cast</h2>
         {roles.length === 0 ? (
           <Card className="border-dashed">
             <CardContent className="py-16 text-center">
@@ -192,6 +254,58 @@ export default function BuildCastPage() {
             </CardContent>
           </Card>
         )}
+
+        {/* Crew Section */}
+        <h2 className="text-xl font-semibold mt-12 mb-4">Crew</h2>
+        {crewRoles.length === 0 ? (
+          <Card className="border-dashed">
+            <CardContent className="py-16 text-center">
+              <Clapperboard className="h-16 w-16 mx-auto text-muted-foreground/50 mb-4" />
+              <h3 className="text-xl font-semibold mb-2">No Crew Positions Yet</h3>
+              <p className="text-muted-foreground mb-6">Add behind-the-camera positions like Director or Editor</p>
+              <Button onClick={handleAddCrewRole} size="lg">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Your First Crew Position
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleCrewDragEnd}>
+            <SortableContext items={crewRoles.map(r => r.id)} strategy={verticalListSortingStrategy}>
+              <div className="space-y-4">
+                {crewRoles.map((crewRole, index) => (
+                  <SortableCrewRoleCard
+                    key={crewRole.id}
+                    crewRole={crewRole}
+                    index={index}
+                    assignedCrewMember={crewRole.crewMemberId ? getCrewMemberById(crewRole.crewMemberId) ?? null : null}
+                    onAssignClick={() => {
+                      setSelectedCrewRoleId(crewRole.id)
+                      setCrewSearchOpen(true)
+                    }}
+                    onRemoveClick={() => removeCrewRole(selectedCastId ?? '', crewRole.id)}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
+        )}
+
+        {/* Crew Summary Card */}
+        {crewRoles.length > 0 && (
+          <Card className="mt-8 bg-primary/5 border-primary/20">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-semibold text-lg">Crew Summary</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {crewRoles.filter(r => r.crewMemberId).length} of {crewRoles.length} positions filled
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       {/* Actor Search Dialog */}
@@ -232,6 +346,53 @@ export default function BuildCastPage() {
                     ))}
                     {actor.skills.length > 3 && (
                       <Badge variant="secondary" className="text-xs">+{actor.skills.length - 3} more</Badge>
+                    )}
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Crew Search Dialog */}
+      <Dialog open={crewSearchOpen} onOpenChange={setCrewSearchOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Assign Crew Member</DialogTitle>
+          </DialogHeader>
+
+          <div className="relative my-4">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search crew by name, title, or skills..."
+              value={crewSearchQuery}
+              onChange={(e) => setCrewSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+
+          <div className="space-y-2">
+            {filteredCrewMembers.map(member => (
+              <button
+                key={member.id}
+                onClick={() => handleAssignCrewMember(member.id)}
+                className="w-full flex items-center gap-4 p-4 rounded-lg border hover:bg-muted/50 transition-colors text-left"
+              >
+                <img
+                  src={member.headshotUrl || '/placeholder.jpg'}
+                  alt={member.name}
+                  className="w-16 h-16 object-cover rounded-lg"
+                />
+                <div className="flex-1">
+                  <div className="font-semibold">{member.name}</div>
+                  <div className="text-sm text-muted-foreground">{member.title} &middot; {member.department}</div>
+                  <div className="flex gap-1 mt-2 flex-wrap">
+                    {member.skills.slice(0, 3).map(skill => (
+                      <Badge key={skill} variant="secondary" className="text-xs">{skill}</Badge>
+                    ))}
+                    {member.skills.length > 3 && (
+                      <Badge variant="secondary" className="text-xs">+{member.skills.length - 3} more</Badge>
                     )}
                   </div>
                 </div>
@@ -321,6 +482,101 @@ function SortableRoleCard({
             {/* Actions */}
             <div className="flex gap-2">
               {assignedActor && (
+                <Button variant="outline" size="sm" onClick={onAssignClick}>
+                  Change
+                </Button>
+              )}
+              <Button variant="ghost" size="icon" onClick={onRemoveClick}>
+                <Trash2 className="h-4 w-4 text-destructive" />
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
+function SortableCrewRoleCard({
+  crewRole,
+  index,
+  assignedCrewMember,
+  onAssignClick,
+  onRemoveClick
+}: {
+  crewRole: CrewRole
+  index: number
+  assignedCrewMember: CrewMember | null
+  onAssignClick: () => void
+  onRemoveClick: () => void
+}) {
+  const {
+    setNodeRef,
+    attributes,
+    listeners,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: crewRole.id })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+
+  return (
+    <div ref={setNodeRef} style={style}>
+      <Card className={isDragging ? 'shadow-lg ring-2 ring-primary/50' : ''}>
+        <CardContent className="p-6">
+          <div className="flex items-center gap-4">
+            {/* Drag Handle */}
+            <div
+              {...attributes}
+              {...listeners}
+              className="cursor-grab active:cursor-grabbing p-2 hover:bg-muted rounded-lg"
+            >
+              <GripVertical className="h-5 w-5 text-muted-foreground" />
+            </div>
+
+            {/* Crew Position Info */}
+            <div className="flex-1">
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-medium text-muted-foreground">#{index + 1}</span>
+                <h3 className="font-semibold text-lg">{crewRole.positionName}</h3>
+                {crewRole.department && (
+                  <Badge variant="outline">{crewRole.department}</Badge>
+                )}
+                {assignedCrewMember && (
+                  <Badge variant="default" className="bg-green-600">Filled</Badge>
+                )}
+              </div>
+              {crewRole.description && (
+                <p className="text-sm text-muted-foreground mt-1">{crewRole.description}</p>
+              )}
+
+              {assignedCrewMember ? (
+                <div className="flex items-center gap-3 mt-3">
+                  <img
+                    src={assignedCrewMember.headshotUrl || '/placeholder.jpg'}
+                    alt={assignedCrewMember.name}
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                  <div className="text-sm">
+                    <span className="font-medium">{assignedCrewMember.name}</span>
+                    <span className="text-muted-foreground ml-2">{assignedCrewMember.title}</span>
+                  </div>
+                </div>
+              ) : (
+                <Button variant="outline" size="sm" onClick={onAssignClick} className="mt-3">
+                  <Clapperboard className="h-4 w-4 mr-2" />
+                  Assign Crew Member
+                </Button>
+              )}
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-2">
+              {assignedCrewMember && (
                 <Button variant="outline" size="sm" onClick={onAssignClick}>
                   Change
                 </Button>

@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Search, Filter, X, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -19,25 +18,11 @@ const allGenres = ['Film', 'Television', 'Theatre', 'Commercial', 'Voiceover', '
 const sortOptions = ['name', 'experience', 'recent']
 
 export default function ActorsPage() {
-  const searchParams = useSearchParams()
-  const router = useRouter()
-  const initialQuery = searchParams.get('q') || ''
-
-  const [searchQuery, setSearchQuery] = React.useState(initialQuery)
+  const [searchQuery, setSearchQuery] = React.useState('')
   const [selectedSkills, setSelectedSkills] = React.useState<string[]>([])
   const [selectedGenres, setSelectedGenres] = React.useState<string[]>([])
   const [sortBy, setSortBy] = React.useState<string>('name')
   const [showFilters, setShowFilters] = React.useState(false)
-
-  // Debounced search to update URL
-  React.useEffect(() => {
-    const timer = setTimeout(() => {
-      const params = new URLSearchParams()
-      if (searchQuery) params.set('q', searchQuery)
-      router.push(`/actors?${params.toString()}`)
-    }, 300)
-    return () => clearTimeout(timer)
-  }, [searchQuery, router])
 
   // Filter and sort actors
   const filteredActors = React.useMemo(() => {

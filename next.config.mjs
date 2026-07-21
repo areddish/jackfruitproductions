@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  basePath: "/jackfruitproductions",
+  output: "export",
   images: {
     remotePatterns: [
       {
@@ -7,11 +9,6 @@ const nextConfig = {
         hostname: '**',
       },
     ],
-  },
-  experimental: {
-    serverActions: {
-      bodySizeLimit: '10mb',
-    },
   },
 };
 

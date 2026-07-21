@@ -2,7 +2,6 @@
 
 import * as React from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { Moon, Sun, Menu, X, User, Film, Search, Sparkles } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { Button } from '@/components/ui/button'
@@ -23,13 +22,14 @@ const navigation = [
 ]
 
 export function Navbar() {
-  const pathname = usePathname()
+  const [pathname, setPathname] = React.useState('/')
   const [isOpen, setIsOpen] = React.useState(false)
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = React.useState(false)
 
   React.useEffect(() => {
     setMounted(true)
+    setPathname(window.location.pathname)
   }, [])
 
   return (
